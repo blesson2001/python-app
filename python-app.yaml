@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: python-cron-app
+  annotations:
+        iam.amazonaws.com/role: AdminAccess
+spec:
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  schedule: "* * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: python-crob-app
+            image: blesson2001/python-renew:latest
+            imagePullPolicy: IfNotPresent
+            volumeMounts:
+                - name: www-persistent-storage
+                  mountPath: /app
+          volumes:
+              - name: www-persistent-storage
+                persistentVolumeClaim:
+                  claimName: task-pvc-volume 
+          restartPolicy: Never
