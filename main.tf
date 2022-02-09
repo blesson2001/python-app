@@ -31,25 +31,40 @@ provider "kubernetes" {
 }
 
 resource "aws_s3_bucket" "qa-bucket" {
-  bucket = "qa-private-341"
+  bucket = "qa-blesson-jacob-platform-challenge"
   acl    = "private"
-
-
   tags = {
     Name        = "Qa bucket"
     Environment = "Dev"
   }
+  lifecycle_rule {
+    enabled = true
+    expiration {
+      days = 1
+    }
+  }
 }
+
+
+
 resource "aws_s3_bucket" "stage-bucket" {
-  bucket = "stage-private-341"
+  bucket = "staging-blesson-jacob-platform-challenge"
   acl    = "private"
-
-
   tags = {
     Name        = "stage bucket"
     Environment = "Dev"
   }
+  lifecycle_rule {
+    enabled = true
+    expiration {
+      days = 1
+    }
+  }
 }
+
+
+
+
 
 
 
