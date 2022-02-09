@@ -174,10 +174,59 @@ resource "kubernetes_cron_job_v1" "pythonappcron" {
             volume  {
               name = "www-persistent-storage"
               persistent_volume_claim {
-                claim_name = kubernetes_persistent_volume.qa-pv.metadata.0.name
+                claim_name = "qa-claim"
               }
             }
             restart_policy = "Never"
+            }
+          }
+        }
+      }
+    }
+  }
+
+
+
+
+
+resource "kubernetes_cron_job_v1" "pythonappcronstage" {
+  metadata {
+    name = "pythonappcronstage"
+    annotations = {
+      "iam.amazonaws.com/role" : "AdminAccess"
+    }
+    namespace = "stage"
+    }
+  spec {
+    successful_jobs_history_limit = 1
+    failed_jobs_history_limit     = 1
+    schedule                      = "* * * * *"
+    job_template {
+      metadata{
+        name = "python-app-job-templete"
+      }
+      spec {
+        template {
+          metadata{
+            name = "python-app-templete"
+          }
+          spec {
+            container {
+              name    = "python-cron-app"
+              image   = "blesson2001/python-renew:latest"
+              image_pull_policy = "IfNotPresent"
+              volume_mount {
+                name = "www-persistent-storage-stage"
+                mount_path = "/app"
+              }
+              }
+            volume {
+              name = "www-persistent-storage-stage"
+              persistent_volume_claim {
+                claim_name = "stage-claim"
+              }
+            }
+             restart_policy = "Never"
             }
           }
         }
